@@ -19,7 +19,12 @@ namespace StudentEMS.ViewModels
 
         public ICommand SelectViewCommand { get; set; }
 
-        public MainViewModel() => SelectViewCommand = new RelayCommand(SelectCurrentView, CanSelectCurrentView);
+        public MainViewModel()
+        {
+            SelectedViewModel = new HomeViewModel();
+            CurrentView.CurrentViewName = "Home";
+            SelectViewCommand = new RelayCommand(SelectCurrentView, CanSelectCurrentView);
+        }
 
         private bool CanSelectCurrentView(object obj)
         {

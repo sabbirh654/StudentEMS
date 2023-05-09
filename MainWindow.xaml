@@ -45,7 +45,7 @@
                 x:Name="subjectNavButton"
                 BorderBrush="Black"
                 Background="LightBlue"
-                Content="About us"
+                Content="Subject"
                 Height="60"
                 FontFamily="Consolas"
                 FontSize="20"
