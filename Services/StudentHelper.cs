@@ -236,6 +236,7 @@ namespace StudentEMS.Services
 
                 int studentId = Convert.ToInt32(row["StudentId"]);
 
+                student.StudentId = studentId;
                 student.CGPA = GetStudentCGPA(studentId);
                 student.LastEnrolledSemester = GetLastEnrolledSemester(studentId);
                 student.TotalEarnedCredits = GetTotalEarnedCredits(studentId);
