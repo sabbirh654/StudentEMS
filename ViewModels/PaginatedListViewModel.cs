@@ -1,50 +1,39 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Input;
 
-using StudentEMS.AppData;
+using Microsoft.Extensions.DependencyInjection;
+
 using StudentEMS.Command;
 using StudentEMS.Constants;
-using StudentEMS.Models;
+using StudentEMS.Services.Interfaces;
 
 namespace StudentEMS.ViewModels
 {
-    public class PaginatedListViewModel : BaseViewModel
+    public class HomeViewModel : BaseViewModel
     {
-        public HomeViewModel Home { get; set; }
+        private string searchText;
+        private IStudentHelper? _studentHelper;
+        private ICourseHelper? _courseHelper;
 
-        public PaginatedListViewModel()
+        public HomeViewModel()
         {
+            _studentHelper = App.ServiceProvider.GetService<IStudentHelper>();
+            _courseHelper = App.ServiceProvider.GetRequiredService<ICourseHelper>();
             searchCommand = new RelayCommand(Search, CanExecuteSearch);
             OnClickedNextButtonCommand = new RelayCommand(OnClickedNextButton, CanExecuteNextCommand);
             OnClickedPreviousButtonCommand = new RelayCommand(OnClickedPreviousButton, CanExecutePreviousCommand);
             SelectedPageCommand = new RelayCommand(OnPageSizeChanged, CanExecutePageSizeChanged);
+            DeleteStudentCommand = new RelayCommand(DeleteStudent, CanDeleteStudent);
+            UpdateStudentCommand = new RelayCommand(UpdateStudent, CanUpdateStudent);
             CurrentPage = Constant.DefaultPage;
-            Home = new HomeViewModel();
-            Columns = new ObservableCollection<ColumnModel>();
-
-            GenerateColumns();
             InitializeComboBox();
             CountTotalRows();
             LoadData();
         }
 
-        private bool CanExecutePageSizeChanged(object obj)
-        {
-            return true;
-        }
-
-        private void OnPageSizeChanged(object obj)
-        {
-            CurrentPage = Constant.DefaultPage;
-            UpdatePageLabel();
-            LoadData();
-        }
-
-        private string searchText;
         public string SearchText
         {
             get { return searchText; }
@@ -109,36 +98,75 @@ namespace StudentEMS.ViewModels
             set { totalPages = value; OnPropertyChanged(nameof(totalPages)); }
         }
 
+        private List<Student> gridData;
 
-        private ObservableCollection<ColumnModel> columns;
-        public ObservableCollection<ColumnModel> Columns
-        {
-            get { return columns; }
-            set
-            {
-                if (columns != value)
-                {
-                    columns = value;
-                    OnPropertyChanged(nameof(Columns));
-                }
-            }
-        }
-
-        private List<dynamic> gridData;
-
-        public List<dynamic> GridData
+        public List<Student> GridData
         {
             get { return gridData; }
             set { gridData = value; OnPropertyChanged(nameof(GridData)); }
         }
+
+        private Student selectedStudent;
+
+        public Student SelectedStudent
+        {
+            get { return selectedStudent; }
+            set { selectedStudent = value; OnPropertyChanged(nameof(SelectedStudent)); }
+        }
+
+
 
 
         public ICommand searchCommand { get; set; }
         public ICommand OnClickedNextButtonCommand { get; set; }
         public ICommand OnClickedPreviousButtonCommand { get; set; }
         public ICommand SelectedPageCommand { get; set; }
+        public ICommand DeleteStudentCommand { get; set; }
+        public ICommand UpdateStudentCommand { get; set; }
 
-        public ICommand GenerateColumnsCommand { get; set; }
+        private void LoadData()
+        {
+            int limit = SelectedPageSize;
+
+            if (CurrentPage == 0)
+            {
+                CurrentPage = 1;
+            }
+
+            int offset = (CurrentPage - 1) * SelectedPageSize;
+
+            GridData = GetStudentData(limit, offset, searchText);
+
+            UpdatePageLabel();
+        }
+
+        private void InitializeComboBox()
+        {
+            PageSizeList = Constant.PageSizeList.ToList();
+            SelectedPageSize = Constant.DefaultPageSize;
+        }
+
+        private void CountTotalRows()
+        {
+            TotalRows = GetStudentCount(searchText);
+        }
+
+        private int GetTotalPages()
+        {
+            return (int)Math.Ceiling((double)TotalRows / SelectedPageSize);
+        }
+
+        private void UpdatePageLabel()
+        {
+            TotalPages = GetTotalPages();
+
+            if (TotalPages == 0)
+            {
+                CurrentPage = 0;
+            }
+
+            CurrentPageLabel = $"{CurrentPage} of {TotalPages}";
+        }
 
         private void Search(object parameter)
         {
@@ -159,85 +187,94 @@ namespace StudentEMS.ViewModels
 
         private void OnClickedPreviousButton(object obj)
         {
-                CurrentPage--;
-                UpdatePageLabel();
-                LoadData();
+            CurrentPage--;
+            UpdatePageLabel();
+            LoadData();
         }
 
         private bool CanExecuteNextCommand(object obj)
         {
-             return CurrentPage < GetTotalPages();
+            return CurrentPage < GetTotalPages();
         }
 
         private void OnClickedNextButton(object obj)
         {
-                CurrentPage++;
-                UpdatePageLabel();
-                LoadData();
-        }
-
-        private void GenerateColumns()
-        {
-            switch (CurrentView.CurrentViewName)
-            {
-                case "Home":
-                    Columns = Home.GenerateColumsForStaffHome();
-                    break;
-            }
-        }
-
-        private void LoadData()
-        {
-            int limit = SelectedPageSize;
-
-            if (CurrentPage == 0)
-            {
-                CurrentPage = 1;
-            }
-
-            int offset = (CurrentPage - 1) * SelectedPageSize;
-
-            switch (CurrentView.CurrentViewName)
-            {
-                case "Home":
-                    GridData = Home.GetStudentData(limit, offset, searchText).Cast<dynamic>().ToList();
-                    break;
-            }
-
+            CurrentPage++;
             UpdatePageLabel();
+            LoadData();
         }
 
-        private void InitializeComboBox()
+        private bool CanExecutePageSizeChanged(object obj)
         {
-            PageSizeList = Constant.PageSizeList.ToList();
-            SelectedPageSize = Constant.DefaultPageSize;
+            return true;
         }
 
-        private void CountTotalRows()
+        private void OnPageSizeChanged(object obj)
         {
-            switch (CurrentView.CurrentViewName)
+            CurrentPage = Constant.DefaultPage;
+            UpdatePageLabel();
+            LoadData();
+        }
+
+        public List<Student> GetStudentData(int limit, int offset, string filterText)
+        {
+            List<Student> result = _studentHelper.GetAllStudentInfo(limit, offset, filterText);
+            return result;
+        }
+
+        public int GetStudentCount(string filterText)
+        {
+            int staffCount = _studentHelper.GetStudentCount(filterText);
+            return staffCount;
+        }
+
+        private bool CanDeleteStudent(object obj)
+        {
+            return SelectedStudent != null;
+        }
+
+        private void DeleteStudent(object obj)
+        {
+            MessageBoxResult result = MessageBox.Show("Are you sure you want to delete?", "Confirmation", MessageBoxButton.YesNo, MessageBoxImage.Question);
+
+            if (result == MessageBoxResult.No)
             {
-                case "Home":
-                    TotalRows = Home.GetStudentCount(searchText);
-                    break;
+                return;
+            }
+
+            bool isCourseDeleted = _courseHelper.DeleteCoursesWhenAStudentDeleted(selectedStudent.StudentId);
+
+            if (!isCourseDeleted)
+            {
+                return;
+            }
+
+            //string studentImagePath = _studentHelper.GetStudentImagePath(selectedStudent.Email);
+
+            //if (File.Exists(studentImagePath))
+            //{
+            //    File.Delete(studentImagePath);
+            //}
+
+
+            bool isStudentDeleted = _studentHelper.DeleteStudent(selectedStudent.StudentId);
+
+            if (isStudentDeleted)
+            {
+                MessageBox.Show("Succesfully Deleted");
+                LoadData();
             }
         }
 
-        private int GetTotalPages()
+        private bool CanUpdateStudent(object obj)
         {
-            return (int)Math.Ceiling((double)TotalRows / SelectedPageSize);
+            return SelectedStudent != null;
         }
 
-        private void UpdatePageLabel()
+        private void UpdateStudent(object obj)
         {
-            TotalPages = GetTotalPages();
 
-            if (TotalPages == 0)
-            {
-                CurrentPage = 0;
-            }
-
-            CurrentPageLabel = $"{CurrentPage} of {TotalPages}";
         }
+
     }
 }

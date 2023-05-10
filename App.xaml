@@ -22,6 +22,5 @@
         <DataTemplate DataType="{x:Type viewModels:ExitViewModel}">
             <views:ExitView />
         </DataTemplate>
-
     </Application.Resources>
 </Application>
