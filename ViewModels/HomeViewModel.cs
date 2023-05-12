@@ -9,6 +9,7 @@ using Microsoft.Extensions.DependencyInjection;
 using StudentEMS.Command;
 using StudentEMS.Constants;
 using StudentEMS.Services.Interfaces;
+using StudentEMS.Views;
 
 namespace StudentEMS.ViewModels
 {
@@ -28,6 +29,7 @@ namespace StudentEMS.ViewModels
             SelectedPageCommand = new RelayCommand(OnPageSizeChanged, CanExecutePageSizeChanged);
             DeleteStudentCommand = new RelayCommand(DeleteStudent, CanDeleteStudent);
             UpdateStudentCommand = new RelayCommand(UpdateStudent, CanUpdateStudent);
+            SubjectDetailsCommand = new RelayCommand(SubjectDetails, CanGoToSubjectDetails);
             CurrentPage = Constant.DefaultPage;
             InitializeComboBox();
             CountTotalRows();
@@ -114,15 +116,13 @@ namespace StudentEMS.ViewModels
             set { selectedStudent = value; OnPropertyChanged(nameof(SelectedStudent)); }
         }
 
-
-
-
         public ICommand searchCommand { get; set; }
         public ICommand OnClickedNextButtonCommand { get; set; }
         public ICommand OnClickedPreviousButtonCommand { get; set; }
         public ICommand SelectedPageCommand { get; set; }
         public ICommand DeleteStudentCommand { get; set; }
         public ICommand UpdateStudentCommand { get; set; }
+        public ICommand SubjectDetailsCommand { get; set; }
 
         private void LoadData()
         {
@@ -276,5 +276,17 @@ namespace StudentEMS.ViewModels
 
         }
 
+        private bool CanGoToSubjectDetails(object obj)
+        {
+            return SelectedStudent != null;
+        }
+
+        private void SubjectDetails(object obj)
+        {
+            SubjectDetailsViewModel sdvm = new SubjectDetailsViewModel(SelectedStudent);
+            SubjectDetailsView sdv = new SubjectDetailsView();
+            sdv.DataContext = sdvm;
+            sdv.ShowDialog();
+        }
     }
 }

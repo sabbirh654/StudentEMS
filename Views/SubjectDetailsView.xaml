@@ -1,28 +1,30 @@
-﻿<UserControl
-    x:Class="StudentEMS.Views.HomeView"
+﻿<Window
+    x:Class="StudentEMS.Views.SubjectDetailsView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:converter="clr-namespace:StudentEMS.Converter"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="clr-namespace:StudentEMS.Views"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    d:DesignHeight="450"
-    d:DesignWidth="800"
+    Title="Subject Details"
+    Width="1200"
+    Height="800"
+    MinWidth="800"
+    MinHeight="500"
+    WindowStartupLocation="CenterScreen"
     mc:Ignorable="d">
-
+    <Window.Resources>
+        <converter:DecimalConverter x:Key="DecimalConverter" />
+    </Window.Resources>
     <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="Auto" />
-            <ColumnDefinition Width="*" />
-            <ColumnDefinition Width="Auto" />
-        </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
-
         </Grid.RowDefinitions>
+
         <TextBlock
             Grid.Row="0"
             Grid.Column="0"
@@ -33,26 +35,59 @@
             FontFamily="Consolas"
             FontSize="36"
             FontWeight="Bold"
-            Text="STUDENT LIST" />
+            Text="COURSE LIST" />
+
         <StackPanel
             Grid.Row="1"
-            Grid.Column="2"
+            Margin="0,10,0,0"
+            HorizontalAlignment="Center"
             Orientation="Horizontal">
-            <Label
-                VerticalAlignment="Center"
-                Content="Search:"
-                FontFamily="Consolas"
-                FontSize="18" />
-            <TextBox
-                Width="220"
-                Height="30"
-                Margin="20"
+            <ComboBox
+                Width="300"
+                Height="50"
+                Margin="10"
                 Padding="5"
+                HorizontalAlignment="Center"
                 VerticalAlignment="Center"
+                VerticalContentAlignment="Center"
                 FontFamily="Consolas"
-                FontSize="16"
-                Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
+                FontSize="18"
+                ItemsSource="{Binding SemesterList, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                SelectedValue="{Binding SelectedSemester, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
+            <StackPanel
+                Margin="20,0,0,0"
+                HorizontalAlignment="Left"
+                Orientation="Vertical">
+                <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
+                    <Label
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Center"
+                        Content="GPA                : "
+                        FontFamily="Consolas"
+                        FontSize="18" />
+                    <TextBlock
+                        Margin="0,0,30,0"
+                        VerticalAlignment="Center"
+                        FontFamily="Consolas"
+                        FontSize="18"
+                        Text="{Binding Gpa, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource DecimalConverter}}" />
+                </StackPanel>
+
+                <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
+                    <Label
+                        Content="Total Earned Credit: "
+                        FontFamily="Consolas"
+                        FontSize="18" />
+                    <TextBlock
+                        Margin="0,0,30,0"
+                        VerticalAlignment="Center"
+                        FontFamily="Consolas"
+                        FontSize="18"
+                        Text="{Binding TotalCredit, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource DecimalConverter}}" />
+                </StackPanel>
+            </StackPanel>
         </StackPanel>
+
         <DataGrid
             Grid.Row="2"
             Grid.ColumnSpan="3"
@@ -63,15 +98,11 @@
             ColumnWidth="200"
             HorizontalScrollBarVisibility="Visible"
             IsReadOnly="True"
-            ItemsSource="{Binding GridData, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+            ItemsSource="{Binding CourseList, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
             RowHeaderWidth="0"
             RowHeight="50"
-            SelectedItem="{Binding SelectedStudent}"
+            SelectedItem="{Binding SelectedCourse}"
             SelectionMode="Single">
-
-            <DataGrid.Resources>
-                <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightBrushKey}" Color="{x:Static SystemColors.HighlightColor}"/>
-            </DataGrid.Resources>
 
             <DataGrid.ColumnHeaderStyle>
                 <Style TargetType="DataGridColumnHeader">
@@ -90,17 +121,21 @@
             </DataGrid.CellStyle>
             <DataGrid.Columns>
                 <DataGridTextColumn
-                    Binding="{Binding StudentId}"
-                    Header="ID"
-                    Visibility="Hidden" />
-                <DataGridTextColumn Binding="{Binding FirstName}" Header="First Name" />
-                <DataGridTextColumn Binding="{Binding LastName}" Header="Last Name" />
-                <DataGridTextColumn Binding="{Binding Email}" Header="Email" />
-                <DataGridTextColumn Binding="{Binding Session}" Header="Session" />
-                <DataGridTextColumn Binding="{Binding Department}" Header="Department" />
-                <DataGridTextColumn Binding="{Binding CGPA}" Header="CGPA" />
-                <DataGridTextColumn Binding="{Binding LastEnrolledSemester}" Header="Last Enrolled Semester" />
-                <DataGridTextColumn Binding="{Binding TotalEarnedCredits}" Header="Total Earned Credits" />
+                    Width="*"
+                    Binding="{Binding SubjectCode}"
+                    Header="Subject Code" />
+                <DataGridTextColumn
+                    Width="*"
+                    Binding="{Binding SubjectName}"
+                    Header="Subject Name" />
+                <DataGridTextColumn
+                    Width="*"
+                    Binding="{Binding CreditHour}"
+                    Header="Credit Hour" />
+                <DataGridTextColumn
+                    Width="*"
+                    Binding="{Binding Grade}"
+                    Header="Grade" />
             </DataGrid.Columns>
         </DataGrid>
 
@@ -153,7 +188,7 @@
                 HorizontalAlignment="Center"
                 VerticalAlignment="Center"
                 VerticalContentAlignment="Center"
-                FontFamily="Arial"
+                FontFamily="Consolas"
                 FontSize="18"
                 ItemsSource="{Binding PageSizeList, UpdateSourceTrigger=PropertyChanged}"
                 SelectedValue="{Binding SelectedPageSize, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
@@ -169,33 +204,52 @@
                 Width="140"
                 Height="50"
                 Margin="10"
-                Command="{Binding SubjectDetailsCommand}"
+                Command="{Binding AddCourseCommand}"
                 FontFamily="Consolas"
                 FontSize="18">
-                <TextBlock Text="Subject Details" TextWrapping="Wrap" />
+                <TextBlock Text="Add Course" TextWrapping="Wrap" />
             </Button>
 
             <Button
                 Width="140"
                 Height="50"
                 Margin="10"
-                Command="{Binding UpdateStudentCommand}"
+                Command="{Binding UpdateGradeCommand}"
                 FontFamily="Consolas"
                 FontSize="18">
-                <TextBlock Text="Update Student" TextWrapping="Wrap" />
+                <TextBlock Text="Update Grade" TextWrapping="Wrap" />
             </Button>
 
             <Button
                 Width="140"
                 Height="50"
                 Margin="10"
-                Command="{Binding DeleteStudentCommand}"
+                Command="{Binding RemoveCourseCommand}"
                 FontFamily="Consolas"
                 FontSize="18">
-                <TextBlock Text="Delete Student" TextWrapping="Wrap" />
+                <TextBlock Text="Remove Course" TextWrapping="Wrap" />
+            </Button>
+            <Button
+                Width="140"
+                Height="50"
+                Margin="10"
+                Command="{Binding SaveCommand}"
+                FontFamily="Consolas"
+                FontSize="18">
+                <TextBlock Text="Save" TextWrapping="Wrap" />
+            </Button>
+            <Button
+                Width="140"
+                Height="50"
+                Margin="10"
+                Command="{Binding CancelCommand}"
+                FontFamily="Consolas"
+                FontSize="18">
+                <TextBlock Text="Cancel" TextWrapping="Wrap" />
             </Button>
 
         </StackPanel>
 
     </Grid>
-</UserControl>
+
+</Window>
