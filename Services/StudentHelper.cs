@@ -4,6 +4,7 @@ using System;
 using StudentEMS.Services.Interfaces;
 using System.Windows;
 using Microsoft.Extensions.DependencyInjection;
+using System.Windows.Controls;
 
 namespace StudentEMS.Services
 {
@@ -18,6 +19,8 @@ namespace StudentEMS.Services
                 u.FirstName AS FirstName,
                 u.LastName AS LastName,
                 u.Email AS Email,
+                u.ImagePath AS ImagePath,
+                s.Password AS Password,
                 IFNULL(u.ContactNumber,'N/A') as ContactNumber,
                 u.DOB AS DOB,
                 s.Session AS Session,
@@ -233,6 +236,10 @@ namespace StudentEMS.Services
                 student.Email = row["Email"].ToString();
                 student.Session = row["Session"].ToString();
                 student.Department = row["Department"].ToString();
+                student.ContactNumber = row["ContactNumber"].ToString();
+                student.DateOfBirth = DateTime.Parse(row["DOB"].ToString());
+                student.Password = row["Password"].ToString();
+                student.ProfilePicturePath = row["ImagePath"].ToString();
 
                 int studentId = Convert.ToInt32(row["StudentId"]);
 

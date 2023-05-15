@@ -8,10 +8,10 @@
         public const int RememberUserTimeInDays = 7;
         public static readonly int[] PageSizeList = { 10, 25, 50, 100 };
         public static readonly double[] creditHourList = { 0.5, 0.75, 1.00, 1.5, 2.0, 3.0 };
-        public static readonly double[] GradeList = { 4.0, 3.75, 3.50, 3.25, 3.00, 2.75, 2.50, 2.25, 2.00, 0.00 };
+        public static readonly string[] GradeList = { "4.00", "3.75", "3.50", "3.25", "3.00", "2.75", "2.50", "2.25", "2.00", "0.00" };
         public const string DefaultDateFormat = "MM-dd-yyyy";
         public const string RegistryPath = @"Computer\HKEY_CURRENT_USER\SOFTWARE\Classes\StudentEMS";
-        public const string DummyImagePath = @"..\..\Assets\dummy image.png";
+        public const string DummyImagePath = @"/StudentEMS;component/Assets/dummy image.png";
         public const string ImageExtensionFilter = @"Image files (*.jpg, *.jpeg, *.png) | *.jpg; *.jpeg; *.png";
 
         public enum UserRole

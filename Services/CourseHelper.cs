@@ -106,9 +106,9 @@ namespace StudentEMS.Services
                 {"studentId", student.StudentId },
                 {"subjectId", _subjectHelper.GetSubjectId(Convert.ToInt32(parts[1]), parts[0]) },
                 {"subjectGrade", course.Grade },
-                {"createdBy", CurrentUserData.UserData.UserName },
+                {"createdBy", "sabbir" },
                 {"createdDate", DateTime.Now.ToString("yyyy-MM-dd")},
-                {"updatedBy", CurrentUserData.UserData.UserName },
+                {"updatedBy", "sabbir" },
                 {"updatedDate", DateTime.Now.ToString("yyyy-MM-dd") }
             };
 
@@ -228,7 +228,7 @@ namespace StudentEMS.Services
                 {"studentId", student.StudentId },
                 {"subjectId", _subjectHelper.GetSubjectId(Convert.ToInt32(parts[1]), parts[0]) },
                 {"subjectGrade", course.Grade },
-                {"updatedBy", CurrentUserData.UserData.UserName },
+                {"updatedBy", "sabbir" },
                 {"updatedDate", DateTime.Now.ToString("yyyy-MM-dd") }
             };
 

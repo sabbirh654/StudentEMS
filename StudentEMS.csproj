@@ -9,17 +9,58 @@
 
   <ItemGroup>
     <Compile Remove="ViewModels\PaginatedListViewModel.cs" />
+    <Compile Remove="ViewModels\UpdateStudentViewModel.cs" />
     <Compile Remove="Views\PaginatedListView.xaml.cs" />
+    <Compile Remove="Views\UpdateStudentWindow.xaml.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="Assets\add.png" />
+    <None Remove="Assets\course.png" />
+    <None Remove="Assets\dummy image.png" />
+    <None Remove="Assets\info.png" />
+    <None Remove="Assets\login.png" />
+    <None Remove="Assets\studentEMS.png" />
+    <None Remove="Assets\subject.png" />
+    <None Remove="Assets\update.png" />
   </ItemGroup>
 
   <ItemGroup>
     <Page Remove="Views\PaginatedListView.xaml" />
+    <Page Remove="Views\UpdateStudentWindow.xaml" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0-preview.3.23174.8" />
     <PackageReference Include="MySql.Data" Version="8.0.31" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Assets\add.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\course.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\dummy image.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\info.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\login.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\studentEMS.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\subject.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\update.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
   </ItemGroup>
 
 </Project>
