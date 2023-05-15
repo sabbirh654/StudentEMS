@@ -1,6 +1,8 @@
 ﻿using StudentEMS.ViewModels;
 
+using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 
 namespace StudentEMS.Views
 {
@@ -9,7 +11,7 @@ namespace StudentEMS.Views
         public HomeView()
         {
             InitializeComponent();
-            this.DataContext = new HomeViewModel();
+         //   this.DataContext = new HomeViewModel();
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using StudentEMS.AppData;
 using StudentEMS.Command;
+using StudentEMS.Views;
 
 using System.Windows.Input;
 
@@ -21,7 +22,11 @@ namespace StudentEMS.ViewModels
 
         public MainViewModel()
         {
-            SelectedViewModel = new HomeViewModel();
+            HomeViewModel homeViewModel = new HomeViewModel();
+            HomeView homeView = new HomeView();
+            homeView.DataContext = homeViewModel;
+            SelectedViewModel = homeViewModel;
+
             CurrentView.CurrentViewName = "Home";
             SelectViewCommand = new RelayCommand(SelectCurrentView, CanSelectCurrentView);
         }

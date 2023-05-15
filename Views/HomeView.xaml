@@ -10,6 +10,7 @@
     mc:Ignorable="d">
 
     <Grid>
+
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto" />
             <ColumnDefinition Width="*" />
@@ -54,6 +55,7 @@
                 Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
         </StackPanel>
         <DataGrid
+            x:Name="dataGrid"
             Grid.Row="2"
             Grid.ColumnSpan="3"
             Margin="20,0,20,10"
@@ -70,7 +72,14 @@
             SelectionMode="Single">
 
             <DataGrid.Resources>
-                <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightBrushKey}" Color="{x:Static SystemColors.HighlightColor}" />
+                <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}"
+                                 Color="CornflowerBlue"/>
+                <SolidColorBrush x:Key="{x:Static SystemColors.HighlightTextBrushKey}"
+                                 Color="White"/>
+                <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightTextBrushKey}"
+                                 Color="White"/>
+                <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightBrushKey}"
+                                 Color="{x:Static Colors.CornflowerBlue}" />
             </DataGrid.Resources>
 
             <DataGrid.ColumnHeaderStyle>

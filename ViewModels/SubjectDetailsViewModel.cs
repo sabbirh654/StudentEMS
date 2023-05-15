@@ -1,13 +1,17 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 
+using StudentEMS.AppData;
 using StudentEMS.Command;
 using StudentEMS.Constants;
 using StudentEMS.Models;
+using StudentEMS.Services;
 using StudentEMS.Services.Interfaces;
+using StudentEMS.Views;
 
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Windows;
 using System.Windows.Input;
 
 namespace StudentEMS.ViewModels
@@ -17,6 +21,8 @@ namespace StudentEMS.ViewModels
         private Student selectedStudent;
         private ISubjectHelper _subjectHelper;
         private ICourseHelper _courseHelper;
+
+        public Action CloseAction { get; set; }
         public Student SelectedStudent
         {
             get { return selectedStudent; }
@@ -136,7 +142,12 @@ namespace StudentEMS.ViewModels
         public ICommand OnClickedNextButtonCommand { get; set; }
         public ICommand OnClickedPreviousButtonCommand { get; set; }
         public ICommand SelectedPageCommand { get; set; }
-        public ICommand SelectedSemesterCommand {  get; set; }
+        public ICommand SelectedSemesterCommand { get; set; }
+        public ICommand AddCourseCommand { get; set; }
+        public ICommand RemoveCourseCommand { get; set; }
+        public ICommand UpdateGradeCommand { get; set; }
+        public ICommand SaveCommand { get; set; }
+        public ICommand CancelCommand { get; set; }
 
         public SubjectDetailsViewModel(Student selectedStudent)
         {
@@ -144,11 +155,18 @@ namespace StudentEMS.ViewModels
 
             _subjectHelper = App.ServiceProvider.GetService<ISubjectHelper>();
             _courseHelper = App.ServiceProvider.GetService<ICourseHelper>();
+            AddableSubjectListForACourse = new List<string>();
 
             OnClickedNextButtonCommand = new RelayCommand(OnClickedNextButton, CanExecuteNextCommand);
             OnClickedPreviousButtonCommand = new RelayCommand(OnClickedPreviousButton, CanExecutePreviousCommand);
             SelectedPageCommand = new RelayCommand(OnPageSizeChanged, CanExecutePageSizeChanged);
             SelectedSemesterCommand = new RelayCommand(OnSemesterSelected, CanExecutedSemesterSelection);
+            AddCourseCommand = new RelayCommand(AddCourse, CanAddCourse);
+            UpdateGradeCommand = new RelayCommand(UpdateGrade, CanUpdateGrade);
+            RemoveCourseCommand = new RelayCommand(RemoveCourse, CanRemoveCourse);
+            SaveCommand = new RelayCommand(Save, CanSave);
+            CancelCommand = new RelayCommand(Cancel, CanCancel);
+
             CurrentPage = Constant.DefaultPage;
             AddedCourseList = new List<Course>();
             InitializePageComboBox();
@@ -302,8 +320,184 @@ namespace StudentEMS.ViewModels
 
         private void OnSemesterSelected(object obj)
         {
-                CountTotalRows();
+            CountTotalRows();
+            LoadData();
+        }
+
+        private void AddCourse(object obj)
+        {
+            CoursesAvailableToAdd();
+
+            if (AddableSubjectListForACourse.Count == 0)
+            {
+                MessageBox.Show("No course is available to add!");
+                return;
+            }
+
+            AddUpdateCourseView addUpdateCourseView = new AddUpdateCourseView();
+            AddUpdateCourseViewModel addUpdateCourseViewModel = new AddUpdateCourseViewModel(this, false);
+            addUpdateCourseView.DataContext = addUpdateCourseViewModel;
+            addUpdateCourseViewModel.CloseAction = addUpdateCourseView.Close;
+            addUpdateCourseView.ShowDialog();
+            LoadData();
+        }
+
+        private bool CanAddCourse(object obj)
+        {
+            return true;
+        }
+
+        private bool CanUpdateGrade(object obj)
+        {
+            return SelectedCourse != null;
+        }
+
+        private void UpdateGrade(object obj)
+        {
+            AddUpdateCourseView addUpdateCourseView = new AddUpdateCourseView();
+            AddUpdateCourseViewModel addUpdateCourseViewModel = new AddUpdateCourseViewModel(this, true);
+            addUpdateCourseView.DataContext = addUpdateCourseViewModel;
+            addUpdateCourseViewModel.CloseAction = addUpdateCourseView.Close;
+            addUpdateCourseView.ShowDialog();
+            LoadData();
+        }
+
+        private bool CanRemoveCourse(object obj)
+        {
+            return SelectedCourse != null;
+        }
+
+        private void RemoveCourse(object obj)
+        {
+            if (IsSelectedCoursePrerequisiteForAnotherCourse())
+            {
+                MessageBox.Show("This course is a prerequisite for another course. Delete those courses before deleting it.");
+                return;
+            }
+
+            if (AddedCourseList == null || AddedCourseList.Count <= 0)
+            {
+                return;
+            }
+
+            int existingCourseIndex = AddedCourseList.FindIndex(c => c.SubjectCode == selectedCourse.SubjectCode);
+
+            if (existingCourseIndex >= 0)
+            {
+                AddedCourseList[existingCourseIndex].DbStatus = Constant.Operation.Delete;
                 LoadData();
+            }
+        }
+
+        private bool CanCancel(object obj)
+        {
+            return true;
+        }
+
+        private void Cancel(object obj)
+        {
+            CloseAction?.Invoke();
+        }
+
+        private bool CanSave(object obj)
+        {
+            return true;
+        }
+
+        private void Save(object obj)
+        {
+            foreach (var course in AddedCourseList)
+            {
+                if (course.IsExistsInDatabase == true)
+                {
+                    switch (course.DbStatus)
+                    {
+                        case Constant.Operation.Delete:
+
+                            bool isCourseDeleted = _courseHelper.DeleteCourse(selectedStudent, course);
+
+                            break;
+
+                        case Constant.Operation.Add:
+                        case Constant.Operation.Update:
+
+                            bool isCourseUpdated = _courseHelper.UpdateCourse(selectedStudent, course);
+                            break;
+                    }
+                }
+                else
+                {
+                    switch (course.DbStatus)
+                    {
+                        case Constant.Operation.Add:
+                        case Constant.Operation.Update:
+
+                            bool isCourseAdded = _courseHelper.AddCourse(selectedStudent, course);
+                            break;
+                    }
+                }
+            }
+
+            MessageBox.Show("Operations successfully performed");
+            CloseAction?.Invoke();
+        }
+
+        void CoursesAvailableToAdd()
+        {
+            List<string> subjects = _subjectHelper.GetSemesterWiseSubjects(SelectedSemester, SelectedStudent.Department);
+            AddableSubjectListForACourse.Clear();
+
+            foreach (var subject in subjects)
+            {
+                string[] parts = subject.Split(':');
+                string subjectCode = parts[0].Trim();
+                string subjectName = parts[1].Trim();
+
+                int existingCourseIndex = AddedCourseList.FindIndex(c => c.SubjectCode == subjectCode && c.SubjectName == subjectName && c.DbStatus != Constant.Operation.Delete);
+
+                if (existingCourseIndex == -1)
+                {
+                    AddableSubjectListForACourse.Add(subject);
+                }
+            }
+        }
+
+        bool IsSelectedCoursePrerequisiteForAnotherCourse()
+        {
+            foreach (var subject in AddedCourseList)
+            {
+                if (subject.DbStatus == Constant.Operation.Delete)
+                {
+                    continue;
+                }
+
+                string[] parts = subject.SubjectCode.Split('-');
+                int subjectId = Convert.ToInt32(parts[1].Trim());
+                string department = parts[0].Trim();
+
+                int id = _subjectHelper.GetSubjectId(subjectId, department);
+
+                List<string> prerequisitesSubject = _subjectHelper.GetAllPrerequisiteSubjectList(id, department);
+
+                foreach (var prerequisite in prerequisitesSubject)
+                {
+                    if (prerequisite == "No Subject")
+                    {
+                        continue;
+                    }
+
+                    parts = prerequisite.Split(':');
+                    string prerequisiteSubjectCode = parts[0].Trim();
+                    string prerequisiteSubjectName = parts[1].Trim();
+
+                    if (selectedCourse.SubjectCode == prerequisiteSubjectCode && selectedCourse.SubjectName == prerequisiteSubjectName)
+                    {
+                        return true;
+                    }
+                }
+            }
+
+            return false;
         }
     }
 }
