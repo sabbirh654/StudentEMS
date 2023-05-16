@@ -2,7 +2,7 @@
 
 namespace StudentEMS
 {
-    public class Student: User
+    public class Student : User
     {
         public int StudentId { get; set; }
         public string Session { get; set; }

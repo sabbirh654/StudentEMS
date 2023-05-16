@@ -273,13 +273,13 @@ namespace StudentEMS.ViewModels
 
         private void UpdateStudent(object obj)
         {
-            //UpdateStudentViewModel updateViewModel = new UpdateStudentViewModel(SelectedStudent);
-            //UpdateStudentWindow updateView = new UpdateStudentWindow();
-            //updateView.DataContext = updateViewModel;
-            //updateViewModel.CloseAction = updateView.Close;
+            UpdateStudentViewModel updateViewModel = new UpdateStudentViewModel(SelectedStudent);
+            UpdateStudentWindow updateView = new UpdateStudentWindow();
+            updateView.DataContext = updateViewModel;
+            updateViewModel.CloseAction = updateView.Close;
 
-            //updateView.ShowDialog();
-            //LoadData();
+            updateView.ShowDialog();
+            LoadData();
 
         }
 
