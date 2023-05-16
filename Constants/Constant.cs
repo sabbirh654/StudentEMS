@@ -11,7 +11,7 @@
         public static readonly string[] GradeList = { "4.00", "3.75", "3.50", "3.25", "3.00", "2.75", "2.50", "2.25", "2.00", "0.00" };
         public const string DefaultDateFormat = "MM-dd-yyyy";
         public const string RegistryPath = @"Computer\HKEY_CURRENT_USER\SOFTWARE\Classes\StudentEMS";
-        public const string DummyImagePath = @"/StudentEMS;component/Assets/dummy image.png";
+        public const string DummyImagePath = @"pack://application:,,,/StudentEMS;component/Assets/dummy image.png";
         public const string ImageExtensionFilter = @"Image files (*.jpg, *.jpeg, *.png) | *.jpg; *.jpeg; *.png";
 
         public enum UserRole

@@ -8,10 +8,21 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="ContactNumberValidationRule.cs" />
+    <Compile Remove="NameValidationRule.cs" />
     <Compile Remove="ViewModels\PaginatedListViewModel.cs" />
-    <Compile Remove="ViewModels\UpdateStudentViewModel.cs" />
     <Compile Remove="Views\PaginatedListView.xaml.cs" />
-    <Compile Remove="Views\UpdateStudentWindow.xaml.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="Assets\add.png" />
+    <None Remove="Assets\course.png" />
+    <None Remove="Assets\dummy image.png" />
+    <None Remove="Assets\info.png" />
+    <None Remove="Assets\login.png" />
+    <None Remove="Assets\studentEMS.png" />
+    <None Remove="Assets\subject.png" />
+    <None Remove="Assets\update.png" />
   </ItemGroup>
 
   <ItemGroup>
@@ -27,7 +38,6 @@
 
   <ItemGroup>
     <Page Remove="Views\PaginatedListView.xaml" />
-    <Page Remove="Views\UpdateStudentWindow.xaml" />
   </ItemGroup>
 
   <ItemGroup>
