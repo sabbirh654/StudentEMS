@@ -2,7 +2,10 @@
 using StudentEMS.Command;
 using StudentEMS.Views;
 
+using System;
+using System.Windows;
 using System.Windows.Input;
+using System.Windows.Threading;
 
 using static StudentEMS.Constants.Constant;
 
@@ -12,23 +15,80 @@ namespace StudentEMS.ViewModels
     {
         private BaseViewModel selectedViewModel;
 
+        private bool studentNavigationVisibility;
+
+        public bool StudentNavigationVisibility
+        {
+            get { return studentNavigationVisibility; }
+            set { studentNavigationVisibility = value; OnPropertyChanged(nameof(StudentNavigationVisibility)); }
+        }
+
+        private bool staffNavigationVisibility;
+
+        public bool StaffNavigationVisibility
+        {
+            get { return staffNavigationVisibility; }
+            set { staffNavigationVisibility = value; OnPropertyChanged(nameof(StaffNavigationVisibility)); }
+        }
+
+
         public BaseViewModel SelectedViewModel
         {
             get { return selectedViewModel; }
             set { selectedViewModel = value; OnPropertyChanged("SelectedViewModel"); }
         }
 
+        private string currentDateTime;
+
+        public string CurrentDateTime
+        {
+            get { return currentDateTime; }
+            set { currentDateTime = value; OnPropertyChanged(nameof(CurrentDateTime)); }
+        }
+
+        private DispatcherTimer timer;
         public ICommand SelectViewCommand { get; set; }
+        public ICommand ExitCommand { get; set; }
 
         public MainViewModel()
         {
-            HomeViewModel homeViewModel = new HomeViewModel();
-            HomeView homeView = new HomeView();
-            homeView.DataContext = homeViewModel;
-            SelectedViewModel = homeViewModel;
+            StudentNavigationVisibility = true;
+            StaffNavigationVisibility = false;
+
+            if(StaffNavigationVisibility)
+            {
+                HomeViewModel homeViewModel = new HomeViewModel();
+                HomeView homeView = new HomeView();
+                homeView.DataContext = homeViewModel;
+                SelectedViewModel = homeViewModel;
+            }
+            else
+            {
+                StudentHomeViewModel studentHomeViewModel = new StudentHomeViewModel();
+                StudentHomeView studentHomeView = new StudentHomeView();
+                studentHomeView.DataContext = studentHomeViewModel;
+                SelectedViewModel = studentHomeViewModel;
+            }
+
+            timer = new DispatcherTimer();
+            timer.Interval = TimeSpan.FromSeconds(1);
+            timer.Tick += TimerTick;
+            timer.Start();
+
+            ExitCommand = new RelayCommand(Exit, CanExit);
 
             CurrentView.CurrentViewName = "Home";
             SelectViewCommand = new RelayCommand(SelectCurrentView, CanSelectCurrentView);
+        }
+
+        private bool CanExit(object obj)
+        {
+            return true;
+        }
+
+        private void Exit(object obj)
+        {
+            Application.Current.Shutdown();
         }
 
         private bool CanSelectCurrentView(object obj)
@@ -40,26 +100,32 @@ namespace StudentEMS.ViewModels
         {
             string? parameter = obj as string;
 
-            if (parameter == NavigationItem.Home.ToString())
+            switch(parameter)
             {
-                SelectedViewModel = new HomeViewModel();
-                CurrentView.CurrentViewName = parameter;
+                case nameof(NavigationItem.StaffHome):
+                    SelectedViewModel = new HomeViewModel();
+                    CurrentView.CurrentViewName = parameter;
+                    break;
+                case nameof(NavigationItem.StudentHome):
+                    SelectedViewModel = new StudentHomeViewModel();
+                    CurrentView.CurrentViewName = parameter;
+                    break;
+                case nameof(NavigationItem.StaffUpdateProfile):
+                    SelectedViewModel = new UpdateProfileViewModel();
+                    CurrentView.CurrentViewName = parameter;
+                    break;
+                case nameof(NavigationItem.Subject):
+                    SelectedViewModel = new SubjectViewModel();
+                    CurrentView.CurrentViewName = parameter;
+                    break;
+                default:
+                    break;
             }
-            else if (parameter == NavigationItem.UpdateProfile.ToString())
-            {
-                SelectedViewModel = new UpdateProfileViewModel();
-                CurrentView.CurrentViewName = parameter;
-            }
-            else if (parameter == NavigationItem.Subject.ToString())
-            {
-                SelectedViewModel = new SubjectViewModel();
-                CurrentView.CurrentViewName = parameter;
-            }
-            else if (parameter == NavigationItem.Exit.ToString())
-            {
-                SelectedViewModel = new ExitViewModel();
-                CurrentView.CurrentViewName = parameter;
-            }
+        }
+
+        private void TimerTick(object sender, EventArgs e)
+        {
+            CurrentDateTime = DateTime.Now.ToString("dd-MMM-yyyy" + "\n" + "hh:mm:ss tt");
         }
     }
 }
