@@ -20,10 +20,6 @@
             <views:SubjectView />
         </DataTemplate>
 
-        <DataTemplate DataType="{x:Type viewModels:ExitViewModel}">
-            <views:ExitView />
-        </DataTemplate>
-
         <DataTemplate DataType="{x:Type viewModels:StudentHomeViewModel}">
             <views:StudentHomeView />
         </DataTemplate>

@@ -3,6 +3,7 @@ using StudentEMS.Command;
 using StudentEMS.Views;
 
 using System;
+using System.Windows;
 using System.Windows.Input;
 using System.Windows.Threading;
 
@@ -47,6 +48,7 @@ namespace StudentEMS.ViewModels
 
         private DispatcherTimer timer;
         public ICommand SelectViewCommand { get; set; }
+        public ICommand ExitCommand { get; set; }
 
         public MainViewModel()
         {
@@ -73,8 +75,20 @@ namespace StudentEMS.ViewModels
             timer.Tick += TimerTick;
             timer.Start();
 
+            ExitCommand = new RelayCommand(Exit, CanExit);
+
             CurrentView.CurrentViewName = "Home";
             SelectViewCommand = new RelayCommand(SelectCurrentView, CanSelectCurrentView);
+        }
+
+        private bool CanExit(object obj)
+        {
+            return true;
+        }
+
+        private void Exit(object obj)
+        {
+            Application.Current.Shutdown();
         }
 
         private bool CanSelectCurrentView(object obj)
@@ -102,10 +116,6 @@ namespace StudentEMS.ViewModels
                     break;
                 case nameof(NavigationItem.Subject):
                     SelectedViewModel = new SubjectViewModel();
-                    CurrentView.CurrentViewName = parameter;
-                    break;
-                case nameof(NavigationItem.Exit):
-                    SelectedViewModel = new ExitViewModel();
                     CurrentView.CurrentViewName = parameter;
                     break;
                 default:

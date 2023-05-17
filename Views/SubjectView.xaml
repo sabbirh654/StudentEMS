@@ -6,13 +6,13 @@
              xmlns:local="clr-namespace:StudentEMS.Views"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
-    <Grid Background="CornflowerBlue">
+    <Grid Background="White">
         <TextBlock
             Text="This is Subject View"
             HorizontalAlignment="Center"
             VerticalAlignment="Center"
             FontSize="72"
-            Foreground="White">
+            Foreground="Black">
 
         </TextBlock>
     </Grid>
