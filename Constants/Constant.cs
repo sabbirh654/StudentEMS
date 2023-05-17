@@ -85,9 +85,17 @@
 
         public enum NavigationItem
         {
-            Home,
-            UpdateProfile,
+            StaffHome,
+            StaffDetails,
+            StaffUpdateProfile,
+            StudentHome,
+            StudentDetails,
+            StudentUpdateProfile,
+            AddStudent,
             Subject,
+            Staff,
+            Auditlog,
+            Logout,
             Exit
         }
     }

@@ -1,5 +1,6 @@
 ﻿using StudentEMS.ViewModels;
 
+using System.Windows;
 using System.Windows.Controls;
 
 namespace StudentEMS.Views
@@ -9,7 +10,7 @@ namespace StudentEMS.Views
         public ExitView()
         {
             InitializeComponent();
-            this.DataContext = new ExitViewModel();
+            Application.Current.Shutdown();
         }
     }
 }
