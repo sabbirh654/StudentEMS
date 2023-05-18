@@ -168,7 +168,7 @@
                 VerticalAlignment="Center"
                 FontFamily="Consolas"
                 FontSize="22"
-                Text="Welcome Sabbir" />
+                Text="{Binding CurrentUser.UserName, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
 
             <TextBlock
                 Grid.Column="1"
