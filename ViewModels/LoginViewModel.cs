@@ -14,6 +14,7 @@ using System.DirectoryServices.AccountManagement;
 
 using static StudentEMS.Constants.Constant;
 using StudentEMS.Views;
+using System.Linq;
 
 namespace StudentEMS.ViewModels
 {
@@ -293,15 +294,18 @@ namespace StudentEMS.ViewModels
                 return;
             }
 
-            _errorsViewModel.ClearErrors(nameof(Password));
-
-            if (Password.Length < 6)
-            {
-                _errorsViewModel.AddError(nameof(Password), "The password must be atleast 6 characters long.");
-            }
-            else
+            if (IsStudentLogin)
             {
                 _errorsViewModel.ClearErrors(nameof(Password));
+
+                if (Password.Length < 6)
+                {
+                    _errorsViewModel.AddError(nameof(Password), "The password must be atleast 6 characters long.");
+                }
+                else
+                {
+                    _errorsViewModel.ClearErrors(nameof(Password));
+                }
             }
         }
 

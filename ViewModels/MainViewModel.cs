@@ -1,9 +1,13 @@
-﻿using StudentEMS.AppData;
+﻿using Microsoft.Extensions.DependencyInjection;
+
+using StudentEMS.AppData;
 using StudentEMS.Command;
 using StudentEMS.Models;
+using StudentEMS.Services.Interfaces;
 using StudentEMS.Views;
 
 using System;
+using System.Linq;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Threading;
@@ -20,6 +24,7 @@ namespace StudentEMS.ViewModels
 
         private User currentUser;
 
+        private ILoginServices _loginServices;
         public User CurrentUser
         {
             get { return currentUser; }
@@ -59,9 +64,12 @@ namespace StudentEMS.ViewModels
         private DispatcherTimer timer;
         public ICommand SelectViewCommand { get; set; }
         public ICommand ExitCommand { get; set; }
+        public ICommand LogoutCommand { get; set; }
 
         public MainViewModel(User currentUser)
         {
+            _loginServices = App.ServiceProvider.GetService<ILoginServices>() ;
+
             this.CurrentUser = currentUser;
 
             switch (CurrentUser.UserRole)
@@ -99,9 +107,31 @@ namespace StudentEMS.ViewModels
             timer.Start();
 
             ExitCommand = new RelayCommand(Exit, CanExit);
+            LogoutCommand = new RelayCommand(Logout, CanLogout);
 
             CurrentView.CurrentViewName = "Home";
             SelectViewCommand = new RelayCommand(SelectCurrentView, CanSelectCurrentView);
+        }
+
+        private bool CanLogout(object obj)
+        {
+            return true;
+        }
+
+        private void Logout(object obj)
+        {
+
+
+            Window? window = Application.Current.Windows.OfType<Window>().SingleOrDefault(w => w.DataContext == this);
+
+            if (window != null)
+            {
+                window.Close();
+            }
+
+            _loginServices.RemoveCredentials();
+            LoginView loginView = new LoginView();
+            LoginViewModel loginViewModel = new LoginViewModel(loginView);
         }
 
         private bool CanExit(object obj)

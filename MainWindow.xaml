@@ -109,8 +109,7 @@
                 Content="Audit Log"
                 Style="{StaticResource CustomButtonStyle}" />
             <Button
-                Command="{Binding SelectViewCommand}"
-                CommandParameter="Logout"
+                Command="{Binding LogoutCommand}"
                 Content="Logout"
                 Style="{StaticResource CustomButtonStyle}" />
             <Button
@@ -141,8 +140,7 @@
                 Content="Update Profile"
                 Style="{StaticResource CustomButtonStyle}" />
             <Button
-                Command="{Binding SelectViewCommand}"
-                CommandParameter="Logout"
+                Command="{Binding LogoutCommand}"
                 Content="Logout"
                 Style="{StaticResource CustomButtonStyle}" />
             <Button
