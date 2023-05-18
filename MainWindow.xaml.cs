@@ -9,7 +9,6 @@ namespace StudentEMS
         public MainWindow()
         {
             InitializeComponent();
-            this.DataContext = new MainViewModel();
         }
     }
 }

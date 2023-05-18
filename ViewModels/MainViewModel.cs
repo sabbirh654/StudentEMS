@@ -1,5 +1,6 @@
 ﻿using StudentEMS.AppData;
 using StudentEMS.Command;
+using StudentEMS.Models;
 using StudentEMS.Views;
 
 using System;
@@ -16,6 +17,15 @@ namespace StudentEMS.ViewModels
         private BaseViewModel selectedViewModel;
 
         private bool studentNavigationVisibility;
+
+        private User currentUser;
+
+        public User CurrentUser
+        {
+            get { return currentUser; }
+            set { currentUser = value; OnPropertyChanged(nameof(CurrentUser)); }
+        }
+
 
         public bool StudentNavigationVisibility
         {
@@ -50,12 +60,25 @@ namespace StudentEMS.ViewModels
         public ICommand SelectViewCommand { get; set; }
         public ICommand ExitCommand { get; set; }
 
-        public MainViewModel()
+        public MainViewModel(User currentUser)
         {
-            StudentNavigationVisibility = true;
-            StaffNavigationVisibility = false;
+            this.CurrentUser = currentUser;
 
-            if(StaffNavigationVisibility)
+            switch (CurrentUser.UserRole)
+            {
+                case nameof(UserRole.Student):
+                    StudentNavigationVisibility = true;
+                    StaffNavigationVisibility = false;
+                    break;
+                case nameof(UserRole.Staff):
+                    StudentNavigationVisibility = false;
+                    StaffNavigationVisibility = true;
+                    break;
+                default:
+                    break;
+            }
+
+            if (StaffNavigationVisibility)
             {
                 HomeViewModel homeViewModel = new HomeViewModel();
                 HomeView homeView = new HomeView();
@@ -100,7 +123,7 @@ namespace StudentEMS.ViewModels
         {
             string? parameter = obj as string;
 
-            switch(parameter)
+            switch (parameter)
             {
                 case nameof(NavigationItem.StaffHome):
                     SelectedViewModel = new HomeViewModel();

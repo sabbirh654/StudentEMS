@@ -4,8 +4,8 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="clr-namespace:StudentEMS"
     xmlns:viewModels="clr-namespace:StudentEMS.ViewModels"
-    xmlns:views="clr-namespace:StudentEMS.Views"
-    StartupUri="MainWindow.xaml">
+    xmlns:views="clr-namespace:StudentEMS.Views">
+
     <Application.Resources>
 
         <DataTemplate DataType="{x:Type viewModels:HomeViewModel}">
@@ -19,9 +19,12 @@
         <DataTemplate DataType="{x:Type viewModels:SubjectViewModel}">
             <views:SubjectView />
         </DataTemplate>
-
         <DataTemplate DataType="{x:Type viewModels:StudentHomeViewModel}">
             <views:StudentHomeView />
         </DataTemplate>
+        <DataTemplate DataType="{x:Type viewModels:LoginViewModel}">
+            <views:LoginView />
+        </DataTemplate>
+
     </Application.Resources>
 </Application>

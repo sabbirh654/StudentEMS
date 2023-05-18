@@ -5,16 +5,14 @@ using StudentEMS.Services;
 
 using System;
 using System.Windows;
+using StudentEMS.Views;
+using StudentEMS.ViewModels;
 
 namespace StudentEMS
 {
-    /// <summary>
-    /// Interaction logic for App.xaml
-    /// </summary>
     public partial class App : Application
     {
-        public static IServiceProvider ServiceProvider { get; set; }
-
+        public static IServiceProvider? ServiceProvider { get; set; }
         protected override void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
@@ -31,6 +29,9 @@ namespace StudentEMS
             services.AddTransient<ICourseHelper, CourseHelper>();
 
             ServiceProvider = services.BuildServiceProvider();
+
+            LoginView loginView = new LoginView();
+            LoginViewModel loginViewModel = new LoginViewModel(loginView);
         }
     }
 }
