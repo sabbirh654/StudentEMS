@@ -23,7 +23,6 @@
 
 
         <converter:DecimalConverter x:Key="DecimalConverter" />
-        <converter:TextHeightConverter x:Key="TextHeightConverter" />
 
         <Style x:Key="CustomButtonStyle" TargetType="Button">
             <Setter Property="Height" Value="60" />

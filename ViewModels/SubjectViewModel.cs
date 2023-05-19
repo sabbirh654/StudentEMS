@@ -85,7 +85,7 @@ namespace StudentEMS.ViewModels
         }
 
         public ICommand AddSubjectCommand { get; set; }
-        public ICommand DeleteSubjectCommand { get; set; }
+        public ICommand RemoveSubjectCommand { get; set; }
         public ICommand UpdateSubjectCommand { get; set; }
         public ICommand SelectedPageCommand { get; set; }
         public ICommand OnClickedNextButtonCommand { get; set; }
