@@ -9,7 +9,7 @@
     Title="Student EMS"
     Width="1300"
     Height="800"
-    MinWidth="1000"
+    MinWidth="1100"
     MinHeight="650"
     WindowStartupLocation="CenterScreen"
     mc:Ignorable="d">
